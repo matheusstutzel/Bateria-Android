@@ -3,12 +3,10 @@ package br.stutzel.bateria
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
-import android.os.BatteryManager
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 
@@ -17,18 +15,7 @@ class Monitor : Service() {
     var Id = 16111994
     private lateinit var mBuilder: NotificationCompat.Builder
     private lateinit var mNotificationManager: NotificationManager
-    var mBatInfoReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val batteryPct: Int
-            if (intent != null) {
-                val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-                batteryPct = ((level * 100.0) / scale).toInt()
-            } else batteryPct = -1
-            updateNotification(batteryPct)
-        }
-
-    }
+    var mBatInfoReceiver = BatteryReceiver(this)
 
 
     override fun onBind(intent: Intent): IBinder? = null
@@ -59,10 +46,10 @@ class Monitor : Service() {
         mBuilder.setContentIntent(PendingIntent.getActivity(this, 0,
                 Intent(this, MainActivity::class.java), 0))
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(Id, mBuilder.build())
+        startForeground(Id, mBuilder.build())
     }
 
-    private fun updateNotification(batteryPct: Int) {
+    fun updateNotification(batteryPct: Int) {
         mBuilder
                 .setSmallIcon(generateSmallIcon(batteryPct))
                 .setColor(Color.BLACK)
