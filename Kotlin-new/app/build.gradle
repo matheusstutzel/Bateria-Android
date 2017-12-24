@@ -11,8 +11,8 @@ android {
         applicationId "br.stutzel.bateria"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 201712231
-        versionName "1.02"
+        versionCode 201712241
+        versionName "1.03"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
